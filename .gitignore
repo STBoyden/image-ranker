@@ -1,0 +1,4 @@
+out/
+.idea/
+
+components/*_templ.go
