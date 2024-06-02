@@ -12,4 +12,4 @@ run: build
     ./out/app
 
 format:
-    go -exec go run mvdan.cc/gofumpt@latest -w -extra **/*.go
+    go run mvdan.cc/gofumpt@latest -w -extra **/*.go
