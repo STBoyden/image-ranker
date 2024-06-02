@@ -14,7 +14,7 @@ import (
 func main() {
 	tmpStorage, err := os.MkdirTemp("", "image-ranker-runtime-images")
 	if err != nil {
-		panic("could not create temporary directory: " + err.Error())
+		log.Fatalf("could not create temporary directory: %s", err.Error())
 	}
 
 	root := components.Root
@@ -41,6 +41,6 @@ func main() {
 
 	err = os.RemoveAll(tmpStorage)
 	if err != nil {
-		panic("could not remove temporary directory: " + err.Error())
+		log.Fatalf("could not remove temporary directory: %s", err.Error())
 	}
 }
