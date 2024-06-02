@@ -1,4 +1,5 @@
 out/
 .idea/
+tmp/
 
 components/*_templ.go

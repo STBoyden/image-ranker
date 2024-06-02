@@ -1,0 +1,16 @@
+package components
+
+import (
+    "strconv"
+)
+
+templ Error(code int, message string) {
+    <h1>An error occurred: { strconv.Itoa(code) }</h1>
+    <p>
+        { message }
+    </p>
+
+    <p>
+        Click <a href="/">here</a> to return to the homepage.
+    </p>
+}
