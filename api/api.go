@@ -41,6 +41,11 @@ func GenerateRequesterID(w http.ResponseWriter, r *http.Request) (string, *http.
 	return id.String(), req, nil
 }
 
+func showInternalServerError(ctx context.Context, w http.ResponseWriter, format string, v ...any) {
+	log.Printf("ERR: "+format, v)
+	_ = components.Root(components.Error(ctx, 500, "an internal error occurred, please notify the server administrator")).Render(ctx, w)
+}
+
 func Handler(runtimeImageStoragePath string) http.Handler {
 	handler.HandleFunc("/api/", func(w http.ResponseWriter, r *http.Request) {
 		root := components.Root
@@ -58,8 +63,7 @@ func Handler(runtimeImageStoragePath string) http.Handler {
 		imageStoragePath := filepath.Join(runtimeImageStoragePath, requesterID)
 		err := os.Mkdir(imageStoragePath, 0o755)
 		if err != nil && !os.IsExist(err) {
-			log.Printf("ERR: somehow could not create path at %s: %s", imageStoragePath, err)
-			_ = root(components.Error(r.Context(), 500, "an internal error occurred, please notify the server administrator")).Render(r.Context(), w)
+			showInternalServerError(r.Context(), w, "somehow could not create path at %s: %s", imageStoragePath, err)
 			return
 		}
 		runtimePaths = append(runtimePaths, imageStoragePath)
