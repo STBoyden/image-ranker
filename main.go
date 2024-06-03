@@ -8,7 +8,9 @@ import (
 	"net/http"
 	"os"
 
+	"image-ranker/api"
 	"image-ranker/components"
+	"image-ranker/static"
 )
 
 func main() {
@@ -20,6 +22,8 @@ func main() {
 	root := components.Root
 
 	mux := http.NewServeMux()
+	mux.Handle("/api/", api.Handler())
+	mux.Handle("/static/", static.Handler())
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
 		context := r.Context()
