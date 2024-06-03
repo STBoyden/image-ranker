@@ -2,15 +2,16 @@ package components
 
 import (
     "strconv"
+	"fmt"
 )
 
-templ Error(code int, message string) {
+templ Error(ctx context.Context, code int, message string) {
     <h1>An error occurred: { strconv.Itoa(code) }</h1>
     <p>
         { message }
     </p>
 
     <p>
-        Click <a href="/">here</a> to return to the homepage.
+        Click <a href={templ.SafeURL(fmt.Sprintf("/?requester_id=%v", ctx.Value("requesterID")))}>here</a> to return to the homepage.
     </p>
 }
