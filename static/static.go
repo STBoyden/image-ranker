@@ -24,7 +24,7 @@ func Handler() http.Handler {
 			}
 		}
 
-		log.Printf("serving %s", path)
+		log.Printf("%s, served %s", r.RemoteAddr, path)
 		http.StripPrefix("/static/", http.FileServer(http.Dir(".")))
 	})
 

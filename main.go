@@ -29,6 +29,7 @@ func main() {
 			log.Println("shutting down...")
 			api.Cleanup()
 			_ = os.RemoveAll(tmpStorage)
+			log.Println("stopped")
 			os.Exit(0)
 		}
 	}()
@@ -54,7 +55,16 @@ func main() {
 			http.Redirect(w, req, path+"?requester_id="+id, http.StatusFound)
 			return
 		} else {
-			ctx := context.WithValue(r.Context(), "requesterID", r.URL.Query().Get("requester_id"))
+			q := r.URL.Query().Get("requester_id")
+			id, err := uuid.Parse(q)
+			if err != nil {
+				log.Printf("%s, ERR: supplied requester_id query param was not a valid UUIDv4: supplied value was: '%s'", r.RemoteAddr, q)
+				log.Printf("%s, >>    redirecting to index with nil requester_id", r.RemoteAddr)
+				http.Redirect(w, r, "/", http.StatusFound)
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), "requesterID", id.String())
 			r = r.Clone(ctx)
 		}
 
