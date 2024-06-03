@@ -3,6 +3,7 @@
 **/.idea
 **/tmp
 
+**/data.db
 **/components/*_templ.go
 
 # flyctl launch added from .idea/.gitignore

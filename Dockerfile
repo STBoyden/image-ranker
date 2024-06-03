@@ -1,5 +1,6 @@
 FROM golang:alpine AS builder
 RUN apk add just
+RUN apk add --update gcc musl-dev
 WORKDIR /src
 COPY . .
 RUN just build

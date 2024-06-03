@@ -4,7 +4,9 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"net/http"
 	"os"
@@ -14,7 +16,11 @@ import (
 	"image-ranker/api"
 	"image-ranker/components"
 	"image-ranker/static"
+
+	_ "github.com/mattn/go-sqlite3"
 )
+
+const databaseFile = "data.db"
 
 func main() {
 	tmpStorage, err := os.MkdirTemp("", "image-ranker-runtime-images")
@@ -34,10 +40,16 @@ func main() {
 		}
 	}()
 
+	_ = os.Remove(databaseFile)
+	db, err := sql.Open("sqlite3", databaseFile)
+	if err != nil {
+		log.Fatalf("could not open database: %s", err.Error())
+	}
+
 	root := components.Root
 
 	mux := http.NewServeMux()
-	mux.Handle("/api/", api.Handler(tmpStorage))
+	mux.Handle("/api/", api.Handler(db, tmpStorage))
 	mux.Handle("/static/", static.Handler())
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path

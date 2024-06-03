@@ -1,3 +1,6 @@
+set export
+CGO_ENABLED := "1"
+
 [private]
 prebuild:
     mkdir -p out
