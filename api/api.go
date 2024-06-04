@@ -94,18 +94,19 @@ func Handler(database *sql.DB, runtimeImageStoragePath string) http.Handler {
 
 			w.WriteHeader(404)
 			hasSupportedContentType := false
+		outer:
 			for _, contentType := range strings.Split(r.Header.Get("Accept"), ",") {
 				w.Header().Set("Content-Type", contentType)
 				switch contentType {
 				case "text/html":
 					_ = components.Root(components.Error(r.Context(), message.Code, message.Message)).Render(r.Context(), w)
 					hasSupportedContentType = true
-					break
+					break outer
 				case "text/xml", "application/xml":
 					m, _ := xml.Marshal(message)
 					_, _ = w.Write(m)
 					hasSupportedContentType = true
-					break
+					break outer
 				}
 			}
 
