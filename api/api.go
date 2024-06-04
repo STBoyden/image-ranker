@@ -29,11 +29,15 @@ func Cleanup() {
 	}
 }
 
+func showInternalServerError(ctx context.Context, w http.ResponseWriter, format string, v ...any) {
+	log.Printf("ERR: "+format, v)
+	_ = components.Root(components.Error(ctx, 500, http.StatusText(500))).Render(ctx, w)
+}
+
 func GenerateRequesterID(w http.ResponseWriter, r *http.Request) (string, *http.Request, error) {
 	id, err := uuid.NewRandom()
 	if err != nil {
-		log.Printf("ERR: somehow could not create UUIDv4: %s", err)
-		_ = components.Root(components.Error(r.Context(), 500, "an internal error occurred, please notify the server administrator")).Render(r.Context(), w)
+		showInternalServerError(r.Context(), w, "ERR: somehow could not create UUIDv4: %s", err)
 		return "", nil, err
 	}
 
@@ -41,11 +45,6 @@ func GenerateRequesterID(w http.ResponseWriter, r *http.Request) (string, *http.
 	req := r.Clone(ctx)
 
 	return id.String(), req, nil
-}
-
-func showInternalServerError(ctx context.Context, w http.ResponseWriter, format string, v ...any) {
-	log.Printf("ERR: "+format, v)
-	_ = components.Root(components.Error(ctx, 500, "an internal error occurred, please notify the server administrator")).Render(ctx, w)
 }
 
 func Handler(database *sql.DB, runtimeImageStoragePath string) http.Handler {
