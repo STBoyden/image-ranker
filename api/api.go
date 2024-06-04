@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"log"
 	"net/http"
@@ -74,11 +76,42 @@ func Handler(database *sql.DB, runtimeImageStoragePath string) http.Handler {
 		}
 		runtimePaths = append(runtimePaths, imageStoragePath)
 
-		log.Printf("%s, serving api response for /api%s", r.RemoteAddr, path)
+		log.Printf("%s, started api Response for /api%s", r.RemoteAddr, path)
 
 		switch path {
 		case "/hello":
 			_, _ = w.Write([]byte(fmt.Sprintf(`<h1>Hello, there %v</h1>`, requesterID)))
+		default:
+			log.Printf("%s, served 404 response for path /api%s", r.RemoteAddr, path)
+			type Response struct {
+				Code    int    `json:"status_code" xml:"StatusCode"`
+				Message string `json:"message" xml:"Message"`
+			}
+
+			message := Response{Code: 404, Message: http.StatusText(404)}
+
+			w.WriteHeader(404)
+			hasSupportedContent := false
+			for _, contentType := range strings.Split(r.Header.Get("Accept"), ",") {
+				w.Header().Set("Content-Type", contentType)
+				switch contentType {
+				case "text/html":
+					_ = components.Root(components.Error(r.Context(), message.Code, message.Message)).Render(r.Context(), w)
+					hasSupportedContent = true
+					break
+				case "text/xml", "application/xml":
+					m, _ := xml.Marshal(message)
+					_, _ = w.Write(m)
+					hasSupportedContent = true
+					break
+				}
+			}
+
+			if !hasSupportedContent {
+				m, _ := json.Marshal(message)
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write(m)
+			}
 		}
 	})
 
