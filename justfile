@@ -19,3 +19,9 @@ format:
 
 dev:
     go run github.com/air-verse/air@latest
+
+build-docker:
+    docker build . -t image-ranker:latest
+
+run-docker: build-docker
+    docker run --rm -p 3000:3000 --name image-ranker-app image-ranker:latest
