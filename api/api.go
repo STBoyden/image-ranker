@@ -91,23 +91,23 @@ func Handler(database *sql.DB, runtimeImageStoragePath string) http.Handler {
 			message := Response{Code: 404, Message: http.StatusText(404)}
 
 			w.WriteHeader(404)
-			hasSupportedContent := false
+			hasSupportedContentType := false
 			for _, contentType := range strings.Split(r.Header.Get("Accept"), ",") {
 				w.Header().Set("Content-Type", contentType)
 				switch contentType {
 				case "text/html":
 					_ = components.Root(components.Error(r.Context(), message.Code, message.Message)).Render(r.Context(), w)
-					hasSupportedContent = true
+					hasSupportedContentType = true
 					break
 				case "text/xml", "application/xml":
 					m, _ := xml.Marshal(message)
 					_, _ = w.Write(m)
-					hasSupportedContent = true
+					hasSupportedContentType = true
 					break
 				}
 			}
 
-			if !hasSupportedContent {
+			if !hasSupportedContentType {
 				m, _ := json.Marshal(message)
 				w.Header().Set("Content-Type", "application/json")
 				_, _ = w.Write(m)
