@@ -1,9 +1,11 @@
 package components
 
+import "image-ranker/consts"
+
 templ Index(ctx context.Context) {
     <h1>Hi from Index!</h1>
 
     <p>
-        Hello { ctx.Value("requesterID").(string) }
+        Hello { ctx.Value(consts.RequesterID).(string) }
     </p>
 }

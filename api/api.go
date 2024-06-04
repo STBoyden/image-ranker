@@ -12,9 +12,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"image-ranker/components"
+	"image-ranker/consts"
+
 	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
-	"image-ranker/components"
 )
 
 var (
@@ -43,7 +45,7 @@ func GenerateRequesterID(w http.ResponseWriter, r *http.Request) (string, *http.
 		return "", nil, err
 	}
 
-	ctx := context.WithValue(r.Context(), "requesterID", id.String())
+	ctx := context.WithValue(r.Context(), consts.RequesterID, id.String())
 	req := r.Clone(ctx)
 
 	return id.String(), req, nil
@@ -62,8 +64,8 @@ func Handler(database *sql.DB, runtimeImageStoragePath string) http.Handler {
 		var requesterID string
 		if r.URL.Query().Get("requester_id") != "" {
 			requesterID = r.URL.Query().Get("requester_id")
-		} else if r.Context().Value("requesterID") != nil {
-			requesterID = r.Context().Value("requesterID").(string)
+		} else if r.Context().Value(consts.RequesterID) != nil {
+			requesterID = r.Context().Value(consts.RequesterID).(string)
 		} else {
 			requesterID, r, _ = GenerateRequesterID(w, r)
 		}

@@ -6,15 +6,17 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/google/uuid"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/google/uuid"
+
 	"image-ranker/api"
 	"image-ranker/components"
+	"image-ranker/consts"
 	"image-ranker/static"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -76,7 +78,7 @@ func main() {
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), "requesterID", id.String())
+			ctx := context.WithValue(r.Context(), consts.RequesterID, id.String())
 			r = r.Clone(ctx)
 		}
 
