@@ -18,4 +18,4 @@ format:
     go run mvdan.cc/gofumpt@latest -w -extra **/*.go
 
 dev:
-    go run github.com/cosmtrek/air@latest
+    go run github.com/air-verse/air@latest
