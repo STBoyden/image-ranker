@@ -78,7 +78,7 @@ func main() {
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), consts.RequesterID, id.String())
+			ctx := context.WithValue(r.Context(), consts.RequesterIDKey, id.String())
 			r = r.Clone(ctx)
 		}
 

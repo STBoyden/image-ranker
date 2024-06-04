@@ -13,6 +13,6 @@ templ Error(ctx context.Context, code int, message string) {
     </p>
 
     <p>
-        Click <a href={templ.SafeURL(fmt.Sprintf("/?requester_id=%v", ctx.Value(consts.RequesterID)))}>here</a> to return to the homepage.
+        Click <a href={templ.SafeURL(fmt.Sprintf("/?requester_id=%v", ctx.Value(consts.RequesterIDKey)))}>here</a> to return to the homepage.
     </p>
 }

@@ -45,7 +45,7 @@ func GenerateRequesterID(w http.ResponseWriter, r *http.Request) (string, *http.
 		return "", nil, err
 	}
 
-	ctx := context.WithValue(r.Context(), consts.RequesterID, id.String())
+	ctx := context.WithValue(r.Context(), consts.RequesterIDKey, id.String())
 	req := r.Clone(ctx)
 
 	return id.String(), req, nil
@@ -64,8 +64,8 @@ func Handler(database *sql.DB, runtimeImageStoragePath string) http.Handler {
 		var requesterID string
 		if r.URL.Query().Get("requester_id") != "" {
 			requesterID = r.URL.Query().Get("requester_id")
-		} else if r.Context().Value(consts.RequesterID) != nil {
-			requesterID = r.Context().Value(consts.RequesterID).(string)
+		} else if r.Context().Value(consts.RequesterIDKey) != nil {
+			requesterID = r.Context().Value(consts.RequesterIDKey).(string)
 		} else {
 			requesterID, r, _ = GenerateRequesterID(w, r)
 		}

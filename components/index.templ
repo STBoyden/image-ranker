@@ -6,6 +6,6 @@ templ Index(ctx context.Context) {
     <h1>Hi from Index!</h1>
 
     <p>
-        Hello { ctx.Value(consts.RequesterID).(string) }
+        Hello { ctx.Value(consts.RequesterIDKey).(string) }
     </p>
 }
